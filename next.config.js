@@ -4,6 +4,7 @@ module.exports = {
     dirs: ['src'],
   },
 
+
   reactStrictMode: true,
 
   // Uncoment to add domain whitelist
@@ -14,7 +15,7 @@ module.exports = {
   // },
 
   // SVGR
-  webpack(config) {
+  webpack(config, { isServer }) {
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
@@ -24,10 +25,16 @@ module.exports = {
           options: {
             typescript: true,
             icon: true,
+
           },
         },
       ],
+
     });
+
+    if (!isServer) {
+      config.resolve.fallback.fs = false
+    }
 
     return config;
   },

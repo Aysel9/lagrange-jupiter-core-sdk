@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable unused-imports/no-unused-imports */
 import * as React from 'react';
@@ -6,6 +7,7 @@ import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next';
 import { Connection, PublicKey } from '@solana/web3.js';
 import fetch from 'isomorphic-fetch';
 import { Jupiter, RouteInfo, TOKEN_LIST_URL } from '@jup-ag/core';
+
 import {
   ENV,
   INPUT_MINT_ADDRESS,
@@ -20,7 +22,7 @@ import ButtonLink from '@/components/links/ButtonLink';
 import UnderlineLink from '@/components/links/UnderlineLink';
 import UnstyledLink from '@/components/links/UnstyledLink';
 import Seo from '@/components/Seo';
-
+import 'dotenv/config';
 /**
  * SVGR Support
  * Caveat: No React Props Type.
@@ -35,11 +37,25 @@ import Vercel from '~/svg/Vercel.svg';
 // to customize the default configuration.
 interface Props {
   userAgent?: string;
+  SOLANA_RPC_ENDPOINT?: undefined;
+  TOKEN_LIST_URL?: undefined;
+  ENV?: undefined;
 }
 
 const Home: NextPage<Props> = ({ userAgent }) => {
-  // eslint-disable-next-line no-console
+  const main = async () => {
+    try {
+      const connection = new Connection(SOLANA_RPC_ENDPOINT);
+      const tokens: Token[] = await (await fetch(TOKEN_LIST_URL[ENV])).json();
+      console.log(connection);
+      console.log(tokens);
+    } catch (error) {
+      console.log(error);
+    }
 
+    console.log('Lagrange Main Function');
+  };
+  main();
   return (
     <Layout>
       {/* <Seo templateTitle='Home' /> */}
@@ -93,4 +109,6 @@ Home.getInitialProps = async ({ req }) => {
   const userAgent = req ? req.headers['user-agent'] : navigator.userAgent;
   return { userAgent };
 };
+
+Home.getInitialProps;
 export default Home;

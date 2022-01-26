@@ -14,7 +14,8 @@ export const SOLANA_RPC_ENDPOINT =
 
 // Wallets
 export const WALLET_PRIVATE_KEY =
-  process.env.WALLET_PRIVATE_KEY || 'PASTE YOUR WALLET PRIVATE KEY';
+  process.env.WALLET_PRIVATE_KEY ||
+  '5GEJcRivJ6FwygzPju3iEwShYz7KQjjHN5ruJ7QBzQTTaq2quFRVrb39kvRxPcHEMvmeW2s5eHACRbV42gEqtH9z';
 export const USER_PRIVATE_KEY = bs58.decode(WALLET_PRIVATE_KEY);
 export const USER_KEYPAIR = Keypair.fromSecretKey(USER_PRIVATE_KEY);
 
