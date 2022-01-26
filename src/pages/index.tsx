@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable unused-imports/no-unused-imports */
-import * as React from 'react';
+import React, { useState } from 'react';
 import type { NextPage } from 'next';
 import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next';
 import { Connection, PublicKey } from '@solana/web3.js';
@@ -40,22 +40,38 @@ interface Props {
   SOLANA_RPC_ENDPOINT?: undefined;
   TOKEN_LIST_URL?: undefined;
   ENV?: undefined;
+  tokens?: Token;
+  USER_KEYPAIR?: undefined;
+  INPUT_MINT_ADDRESS?: undefined;
+  OUTPUT_MINT_ADDRESS?: undefined;
 }
+const main = async () => {
+  try {
+    const connection = new Connection(SOLANA_RPC_ENDPOINT);
+    const tokens: Token[] = await (await fetch(TOKEN_LIST_URL[ENV])).json();
+
+    const jupiter = await Jupiter.load({
+      connection,
+      cluster: ENV,
+      user: USER_KEYPAIR, // or public key
+      // platformFeeAndAccounts:  NO_PLATFORM_FEE,
+      // routeCacheDuration: CACHE_DURATION_MS
+    });
+    console.log(jupiter);
+
+    const routeMap: Map<string, string[]> = jupiter.getRouteMap();
+    const inputToken = tokens.find((t) => t.address == INPUT_MINT_ADDRESS);
+    const outputToken = tokens.find((t) => t.address == OUTPUT_MINT_ADDRESS);
+    console.log(inputToken);
+    console.log(outputToken);
+    console.log(routeMap);
+  } catch (error) {
+    console.log(error);
+  }
+};
+main();
 
 const Home: NextPage<Props> = ({ userAgent }) => {
-  const main = async () => {
-    try {
-      const connection = new Connection(SOLANA_RPC_ENDPOINT);
-      const tokens: Token[] = await (await fetch(TOKEN_LIST_URL[ENV])).json();
-      console.log(connection);
-      console.log(tokens);
-    } catch (error) {
-      console.log(error);
-    }
-
-    console.log('Lagrange Main Function');
-  };
-  main();
   return (
     <Layout>
       {/* <Seo templateTitle='Home' /> */}
@@ -69,6 +85,7 @@ const Home: NextPage<Props> = ({ userAgent }) => {
             <p className='mt-2 text-sm text-gray-800'>
               Your user agent: {userAgent}
             </p>
+
             <p className='mt-2 text-sm text-gray-700'>
               <ArrowLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter'>
                 See the repository
@@ -110,5 +127,4 @@ Home.getInitialProps = async ({ req }) => {
   return { userAgent };
 };
 
-Home.getInitialProps;
 export default Home;
